@@ -117,7 +117,7 @@ data = dataHander()
 if config["global"]["temperatureSource"] == "randomNomral":
     data["xwwd"] = round(random.uniform(36.3, 37.2),1)
     data["swwd"] = round(random.uniform(36.3, 37.2),1)
-elif config["global"]["temperatureSource"] == "randomUNomral":
+elif config["global"]["temperatureSource"] == "manual":
     #data["xwwd"] = round(random.uniform(0, 100),1)
     #data["swwd"] = round(random.uniform(0, 100),1)
     pass
