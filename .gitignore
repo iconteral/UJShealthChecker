@@ -3,6 +3,12 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# VSCode temp file
+tempCodeRunnerFile.py
+
+# Personal privacy storage file
+info.ini
+
 # C extensions
 *.so
 

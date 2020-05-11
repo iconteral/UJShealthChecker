@@ -1,0 +1,22 @@
+{
+    "cookies" : {
+        "iPlanetDirectoryPro": "",
+        "cloud_sessionID": "",
+        "_csrf-cloud": ""
+    },
+    "checkTime" : 7,
+    "enableServerChan" : 1,
+    "serverChanSKEY" : "",
+    "temperatureSource" : "randomNomral",
+    "info" : {
+        "schoolCardID" : "",
+        "college" : "",
+        "class" : "",
+        "name" : "",
+        "identityCardID" : "",
+        "gender" : "",
+        "age" : "",
+        "mobile" : "",
+        
+    }
+}
