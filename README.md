@@ -48,7 +48,7 @@ python3 chechker.py
 #### 如何获取Cookie
 以 Chrome 为例，前往[江苏大学服务中心](http://yun.ujs.edu.cn/ "服务中心")登陆账号，跳转回来之后键入 F12 进入控制台，点击 Application -> Cookies -> http://yun.ujs.edu.cn, 找到 cloud_sessionID 的值
 
-![cookies](assert/Cookies.png)
+![cookies](assets/Cookies.png)
 
 #### info.ini 的说明
 一般情况下，[fixedInfo]的内容无需修改，[additionalInfo]根据需要填写，可以留空
