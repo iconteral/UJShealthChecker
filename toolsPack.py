@@ -99,7 +99,9 @@ def infoGen(cookies):
     checkInfo["fixedInfo"]["btn"] = ""
     # 不要求性别
     if not checkInfo.remove_option("fixedInfo", "xb"):
-        print("E:获取信息时出错，请检查 Cookie:cloud_sessionID:'{}' 是否过期或无效".format(cookies["cloud_sessionID"]))
+        print("E:获取信息时出错，请检查 Cookie:cloud_sessionID:'{}' \
+            是否过期或无效，或服务当前不可用(每天下午3点至5点是系统数据处理时间，这段时间系统关闭)"\
+            .format(cookies["cloud_sessionID"]))
         return False
 
     # 保存信息
