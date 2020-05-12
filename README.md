@@ -6,14 +6,17 @@
 - [x] 每天定时自动打卡
 - [x] 微信推送打卡结果
 - [x] 无需桌面环境，云打卡友好
+- [x] 基于 Python3
 - [ ] ~~自动获得位置信息~~
 - [ ] ~~自动获得体温~~
 - [ ] ~~批量打卡~~
 
 ### 使用方法
 #### 安装依赖
+- 安装 Python3
+- 安装必须的库
 ```bash
-pip install beautifulsoup4 requests
+pip3 install beautifulsoup4 requests
 ```
 
 #### 配置
@@ -34,14 +37,14 @@ pip install beautifulsoup4 requests
 
 配置完成后，首次运行以初始化程序
 ```bash
-python3 chechker.py
+python chechker.py
 ```
 该过程会收集用户的默认信息以进行打卡，信息将会保存在 ```info.ini``` 中，请详细检查此文件中的信息以防误报，详见FAQ: [info.ini 的说明](#)。
 
 #### 运行
 检查无误后，大功告成，直接运行程序即可，~~不出意外的话~~ ，程序会在每天的 checkTime 左右🤔为您打卡
 ```bash
-python3 chechker.py
+python chechker.py
 ```
 ### FAQ
 #### 获取 Server酱 服务
@@ -67,7 +70,7 @@ python3 chechker.py
 | bj           | 班级，不可更改                     | 1901                                                                 |
 | xm           | 姓名，不可更改                     | 林子月                                                                  |
 | zjh          | 证件号，不可更改                    | 44010119990601288X                                                   |
-| xb           | 性别，fixme(一律女性，但是大概无所谓)，不可更改 | 女                                                                    |
+| ~~~xb~~~     | ~~~性别，fixme(一律女性，但是大概无所谓)，不可更改~~~ | ~~~女~~~                                                 |
 | nl           | 年龄，不可更改                     | 20                                                                   |
 | sjh          | 手机号，不可更改                    | 2025550185                                                           |
 | sfhbj        | 是否湖北籍                       | 否/是                                                                  |

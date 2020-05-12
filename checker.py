@@ -90,7 +90,7 @@ def infoGen():
     # post 喜加一
     checkInfo["fixedInfo"]["btn"] = ""
     # 不要求性别
-    checkInfo.remove_option("additionalInfo", "xb")
+    checkInfo.remove_option("fixedInfo", "xb")
 
     # 保存信息
     with open("info.ini","w",encoding='utf-8') as f:
