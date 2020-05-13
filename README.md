@@ -13,10 +13,20 @@
 
 ### 使用方法
 #### 安装依赖
-- 安装 Python3
+- 安装 [Python3](https://www.python.org/), 或者使用[国内镜像](https://npm.taobao.org/mirrors/python/)
+
+对于 Linux 用户(以 Ubuntu 为例)
+```bash
+sudo apt install python3 pip3
+```
 - 安装必须的库
 ```bash
 pip3 install beautifulsoup4 requests
+```
+- （可选）安装 [Git](https://git-scm.com/)
+- （可选）使用 Git 拉取代码
+```bash
+git clone https://github.com/iconteral/UJShealthChecker.git
 ```
 
 #### 配置
@@ -28,27 +38,35 @@ pip3 install beautifulsoup4 requests
 | ```temperatureSource``` | 体温来源                   | randomNomral 随机生成正常体温；manual 人工设定；~~sensorSource 从传感器取得\*~~ |
 | ```enableServerChan```  | 是否开启微信推送\*\*        | Bool : False/True                                                 |
 | ```serverChanKEY```     | Server酱 KEY              | 若 enableServerChan 为 True ,则必填，通常情况下是 54 长度的字符串      |
-| ```cloud_sessionID```   | Cookie : cloud_sessionID  | 32 长度的字符串\*\*\*                                              |
+| ```cloud_sessionID```   | Cookie : cloud_sessionID\*\*\*  | 32 长度的字符串                                              |
 
 > 注：
 \* 待实现
 \*\* 需要使用 [Server酱](http://sc.ftqq.com/ "Server酱") 提供的推送服务，详见 FAQ:[获取 Server酱 服务](#%e8%8e%b7%e5%8f%96-server%e9%85%b1-%e6%9c%8d%e5%8a%a1)
-\*\*\* [如何获取Cookie](#%e5%a6%82%e4%bd%95%e8%8e%b7%e5%8f%96cookie)
+\*\*\* FAQ:[如何获取Cookie](#%e5%a6%82%e4%bd%95%e8%8e%b7%e5%8f%96cookie)
 
 配置完成后，首次运行以初始化程序
 ```bash
 python chechker.py
 ```
-该过程会收集用户的默认信息以进行打卡，信息将会保存在 ```info.ini``` 中，请详细检查此文件中的信息以防误报，详见FAQ: [info.ini 的说明](#infoini-%e7%9a%84%e8%af%b4%e6%98%8e)。
+该过程会收集用户的默认信息以进行打卡，信息将会保存在 ```info.ini``` 中，请详细检查此文件中的信息以防误报，详见 FAQ: [info.ini 的说明](#infoini-%e7%9a%84%e8%af%b4%e6%98%8e)。
 
 #### 运行
 检查无误后，大功告成，直接运行程序即可，~~不出意外的话~~ ，程序会在每天的 checkTime 左右🤔为您打卡
 ```bash
 python chechker.py
 ```
+若需要后台运行，对于 Linux 用户，推荐使用 screen，以 Ubuntu 为例：
+```bash
+sudo apt install screen
+screen -S checker # 创建一个新的 session 名为 checker
+python chechker.py # 程序运行之后使用 ctrl + a + d 退出 session
+screen -r checker # 回到 checker session
+```
+
 ### FAQ
 #### 获取 Server酱 服务
-前往[这里](http://sc.ftqq.com/?c=code "Server酱")注册一个SCKEY，再前往[这里](http://sc.ftqq.com/?c=wechat&a=bind "Server酱")绑定您的微信
+前往[这里](http://sc.ftqq.com/?c=code "Server酱")注册一个 SCKEY ，再前往[这里](http://sc.ftqq.com/?c=wechat&a=bind "Server酱")绑定您的微信
 
 #### 如何获取Cookie
 以 Chrome 为例，前往[江苏大学服务中心](http://yun.ujs.edu.cn/ "服务中心")登陆账号，跳转回来之后键入 F12 进入控制台，点击 Application -> Cookies -> http://yun.ujs.edu.cn, 找到 cloud_sessionID 的值
