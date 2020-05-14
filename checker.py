@@ -63,11 +63,13 @@ while True:
         print("I:时间：{0}，结束打卡流程,返回信息:{1}".format(time.strftime("%H:%M:%S"), info))
         time.sleep(1800)
         if keepAlive(cookies):
-            print("W:Cookie已过期，请更换")
+            print("W:Cookie已过期，请更换，程序已退出")
             pushInfo("警告:Cookie已过期，请更换", "拜托≧ ﹏ ≦", config["global"]["serverChanKEY"])
+            exit()
         time.sleep(1800)
     print("I:时间：{}，等待打卡".format(time.strftime("%H:%M:%S")))
     if keepAlive(cookies):
-        print("W:Cookie已过期，请更换")
+        print("W:Cookie已过期，请更换，程序已退出")
         pushInfo("警告:Cookie已过期，请更换", "拜托≧ ﹏ ≦", config["global"]["serverChanKEY"])
+        exit()
     time.sleep(600)
