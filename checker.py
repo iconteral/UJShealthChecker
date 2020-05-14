@@ -51,7 +51,7 @@ while True:
             print("E:出现错误，请检查打卡服务是否可用， Cookie 是否失效")
             if config.getboolean("global", "enableServerChan"):
                 print("I:正在使用 Server酱 推送通知")
-                pushInfo("E:出现错误，请检查打卡服务是否可用(每天下午3点至5点是系统数据处理时间，这段时间系统关闭)， Cookie 是否失效",\
+                pushInfo("打卡出现错误", "E:出现错误，请检查打卡服务是否可用(每天下午3点至5点是系统数据处理时间，这段时间系统关闭)， Cookie 是否失效",\
                     config["global"]["serverChanKEY"])
                 print("I:时间：{0}，结束打卡流程".format(time.strftime("%H:%M:%S")))
                 time.sleep(3600)
@@ -59,9 +59,15 @@ while True:
         # Server 酱接口
         if config.getboolean("global", "enableServerChan"):
             print("I:正在使用 Server酱 推送通知")
-            pushInfo(info, config["global"]["serverChanKEY"])
+            pushInfo("结束打卡流程，请检查结果是否正常", info, config["global"]["serverChanKEY"])
         print("I:时间：{0}，结束打卡流程,返回信息:{1}".format(time.strftime("%H:%M:%S"), info))
-        time.sleep(3600)
-    
+        time.sleep(1800)
+        if keepAlive(cookies):
+            print("W:Cookie已过期，请更换")
+            pushInfo("警告:Cookie已过期，请更换", "拜托≧ ﹏ ≦", config["global"]["serverChanKEY"])
+        time.sleep(1800)
     print("I:时间：{}，等待打卡".format(time.strftime("%H:%M:%S")))
+    if keepAlive(cookies):
+        print("W:Cookie已过期，请更换")
+        pushInfo("警告:Cookie已过期，请更换", "拜托≧ ﹏ ≦", config["global"]["serverChanKEY"])
     time.sleep(600)

@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 import configparser
 import requests
 
-__all__ = ['infoGen', 'pushInfo', 'cookiesHander', 'dataHander', 'headers']
+__all__ = ['infoGen', 'pushInfo', 'cookiesHander', 'dataHander', 'headers', 'keepAlive']
 
 headers = {
     'Connection': 'keep-alive',
@@ -36,9 +36,9 @@ def dataHander():
             data[key] = info[section][key]
     return data
 
-def pushInfo(info, key):
+def pushInfo(title ,info, key):
     data = {
-        "text" : "结束打卡流程，请检查结果是否正常",
+        "text" : title,
         "desp" : info
     }
     response = requests.post("https://sc.ftqq.com/{}.send".format(key),\
@@ -109,3 +109,13 @@ def infoGen(cookies):
         checkInfo.write(f)
         return True
 
+def keepAlive(cookies):
+    response = requests.get('http://yun.ujs.edu.cn',\
+        headers=headers,  cookies=cookies, verify=False)
+    soup = BeautifulSoup(response.text, "html.parser")
+    # 大概不会有人叫"用户登录"吧？
+    # 如果有，我道歉 ~~>_<~~
+    if  soup.find(id = "headLogin").a.string == "用户登录":
+        return 1
+    else:
+        return 0
