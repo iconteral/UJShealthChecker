@@ -1,10 +1,11 @@
 # encoding: utf-8
-
 from bs4 import BeautifulSoup
 import configparser
 import requests
+import crypto
 
-__all__ = ['infoGen', 'pushInfo', 'cookiesHander', 'dataHander', 'headers', 'keepAlive']
+
+__all__ = ['login', 'infoGen', 'pushInfo', 'cookiesHander', 'dataHander', 'headers', 'checkAlive']
 
 headers = {
     'Connection': 'keep-alive',
@@ -17,6 +18,55 @@ headers = {
     'Accept-Language': 'zh-CN,zh;q=0.9,en-GB;q=0.8,en;q=0.7',
 }
 
+class passWordErr(ValueError):
+    def __init__(self, message):
+        self.message = message
+    pass
+
+def login(username, password):
+    headers = {
+        'Connection': 'keep-alive',
+        'Cache-Control': 'max-age=0',
+        'Upgrade-Insecure-Requests': '1',
+        'Origin': 'https://pass.ujs.edu.cn',
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+        'Sec-Fetch-Site': 'same-origin',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-User': '?1',
+        'Sec-Fetch-Dest': 'document',
+        'Referer': 'https://pass.ujs.edu.cn/cas/login',
+        'Accept-Language': 'zh-CN,zh;q=0.9,en-GB;q=0.8,en;q=0.7',
+    }
+    s = requests.Session()
+    response = s.get("https://pass.ujs.edu.cn/cas/login", headers = headers)
+    soup = BeautifulSoup(response.text, "html.parser")
+    key = soup.find(id = "pwdDefaultEncryptSalt")["value"]
+    lt = soup.find("input" , {"name":"lt"})["value"]
+    execution = soup.find("input" , {"name":"execution"})["value"]
+    enc = crypto.aesEncrypt(bytes(key, encoding = "utf-8"),bytes("aNjp4cpa7SH8tSG5",encoding = "utf-8"))
+    addition = "eJFAF3ZnD4sKpFKhA3rNbnht6nZPKXKeMxKR5e7MhkCwBZEwwfZXszf25APPp6Fn"
+    password = str(enc.encrypt(addition + password), encoding="utf-8")
+    data = {
+        'username': username,
+        'password': password,
+        'lt': lt,
+        'dllt': 'userNamePasswordLogin',
+        'execution': execution,
+        '_eventId': 'submit',
+        'rmShown': '1'
+    }
+    response = s.post("https://pass.ujs.edu.cn/cas/login",headers = headers, data = data)
+    response = s.get('http://yun.ujs.edu.cn/site/login', headers=headers, verify=False)
+    response = s.get('http://yun.ujs.edu.cn/', headers=headers, verify=False)
+    soup = BeautifulSoup(response.text, "html.parser")
+    print("sessionID: {}？".format(s.cookies["cloud_sessionID"]))
+    if soup.find(id = "headLogin").a.string == "用户登录":
+        raise passWordErr("用户名/密码错误，或要求验证码（尝试次数达到上限）")
+    print("{},你能听到吗？(登录成功)".format(soup.find(id = "headLogin").a.string))
+    return s.cookies["cloud_sessionID"]
+
 def cookiesHander():
     # 预处理请求头
     config = configparser.ConfigParser()
@@ -24,8 +74,10 @@ def cookiesHander():
     config.optionxform = str
     config.read("conf.ini")
     cookies = {}
-    for key in config["login"]:
-        cookies[key] = config["login"][key]
+    if config["login"]["login"] == "usernamePassword":
+        cookies["cloud_sessionID"] = login(config["login"]["userName"], config["login"]["passWord"])
+    else:
+        cookies["cloud_sessionID"] = config["login"]["cloud_sessionID"]
     return cookies
 
 def dataHander():
@@ -43,6 +95,7 @@ def pushInfo(title ,info, key):
         "text" : title,
         "desp" : info
     }
+    print("I:正在使用 Server酱 推送通知")
     response = requests.post("https://sc.ftqq.com/{}.send".format(key),\
         data = data)
     if response.status_code != 200:
@@ -111,7 +164,7 @@ def infoGen(cookies):
         checkInfo.write(f)
         return True
 
-def keepAlive(cookies):
+def checkAlive(cookies):
     response = requests.get('http://yun.ujs.edu.cn',\
         headers=headers,  cookies=cookies, verify=False)
     soup = BeautifulSoup(response.text, "html.parser")
