@@ -61,10 +61,10 @@ def login(username, password):
     response = s.get('http://yun.ujs.edu.cn/site/login', headers=headers, verify=False)
     response = s.get('http://yun.ujs.edu.cn/', headers=headers, verify=False)
     soup = BeautifulSoup(response.text, "html.parser")
-    print("sessionID: {}？".format(s.cookies["cloud_sessionID"]))
+    print("I: sessionID: {}".format(s.cookies["cloud_sessionID"]))
     if soup.find(id = "headLogin").a.string == "用户登录":
         raise passWordErr("用户名/密码错误，或要求验证码（尝试次数达到上限）")
-    print("{},你能听到吗？(登录成功)".format(soup.find(id = "headLogin").a.string))
+    print("I: {},你能听到吗？(登录成功)".format(soup.find(id = "headLogin").a.string))
     return s.cookies["cloud_sessionID"]
 
 def cookiesHander():
@@ -96,10 +96,14 @@ def pushInfo(title ,info, key):
         "desp" : info
     }
     print("I:正在使用 Server酱 推送通知")
-    response = requests.post("https://sc.ftqq.com/{}.send".format(key),\
-        data = data)
+    response = requests.post("https://sc.ftqq.com/{}.send".format(key), data = data)
     if response.status_code != 200:
-        print("E:Server酱 出现错误: HTTP ERROR " + str(response.status_code()))
+        print("E:Server酱 出现错误: HTTP ERROR " + str(response.status_code))
+    try:
+        msg = response.json()
+    except:
+        print("E:推送时出现不明异常")
+        return 0
     if response.json()["errno"]:
         print("E:Server酱 出现错误: " + response.json()["errmsg"])
     else:
@@ -129,7 +133,7 @@ def infoGen(cookies):
         # 没有初始值的 tag
         else:
             checkInfo["additionalInfo"][button["name"]] = ""
-    
+
     # 删除废物
     # del checkInfo["additionalInfo"]["latitude"]
     # del checkInfo["additionalInfo"]["longitude"]

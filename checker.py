@@ -57,6 +57,7 @@ def check(cookies):
 enableServerChan = config.getboolean("global", "enableServerChan")
 while True:
     now = int(time.strftime("%H"))
+    print("I:时间：{}，等待打卡".format(time.strftime("%H:%M:%S")))
     if checkAlive(cookies) and config["login"]["login"] == "cookie":
         # cookie 无效但只提供 cookie
         print("E:Cookie已过期，请更换，程序已退出")
