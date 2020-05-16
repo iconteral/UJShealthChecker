@@ -25,7 +25,7 @@ sudo apt install python3 pip3
 ```
 - 安装必须的库，如遇失败，请赋予 管理员/root 权限
 ```bash
-pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple # (可选，建议)切换 pypi 镜像到清华大学镜像站
+pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple # (可选，建议)切换 pypi 镜像到清华大学镜像站
 pip3 install beautifulsoup4 requests pycryptodome
 ```
 - （可选）安装 [Git](https://git-scm.com/)
