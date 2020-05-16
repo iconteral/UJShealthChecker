@@ -57,13 +57,18 @@ def check(cookies):
 enableServerChan = config.getboolean("global", "enableServerChan")
 while True:
     now = int(time.strftime("%H"))
-    print("I:时间：{}，等待打卡".format(time.strftime("%H:%M:%S")))
-    if checkAlive(cookies) and config["login"]["login"] == "cookie":
+    checkStatus = checkAlive(cookies)
+    while checkStatus == 2:
+        # retry
+        time.sleep(200)
+        print("W:yun.ujs.edu.cn 服务不可用，200s 后重试")
+        checkStatus = checkAlive(cookies)
+    if checkAlive(cookies) == 1 and config["login"]["login"] == "cookie":
         # cookie 无效但只提供 cookie
         print("E:Cookie已过期，请更换，程序已退出")
         pushInfo("Cookie已过期，请更换:/", "拜托！", config["global"]["serverChanKEY"])
         exit()
-    elif checkAlive(cookies):
+    elif checkAlive(cookies) == 1:
         # cookie 无效但提供用户名/密码：尝试再次获取新的 sessionID
         cookies = cookiesHander()
     if now == checkTime:
@@ -83,42 +88,6 @@ while True:
                 break
         time.sleep(3600) # 好梦
         continue
-    time.sleep(600)
-
-
-# 封印恶心代码🤢
-# while True:
-#     now = int(time.strftime("%H"))
-#     if now == checkTime:
-#         print("I:时间：{}，进入打卡流程".format(time.strftime("%H:%M:%S")))
-#         response = requests.post('http://yun.ujs.edu.cn/xxhgl/yqsb/grmrsb',\
-#         headers=headers, cookies=cookies, data=data, verify=False)
-#         soup = BeautifulSoup(response.text, "html.parser")
-#         try:
-#             info = soup.find_all("h2")[1].string
-#         except IndexError:
-#             print("E:出现错误，请检查打卡服务是否可用， 若使用 Cookie 模式， Cookie 是否失效，10分钟后进行重试")
-#             if config.getboolean("global", "enableServerChan"):
-#                 print("I:正在使用 Server酱 推送通知")
-#                 pushInfo("打卡出现错误", "E:出现错误，请检查打卡服务是否可用(每天下午3点至5点是系统数据处理时间，这段时间系统关闭)， 若使用 Cookie 模式， Cookie 是否失效",\
-#                     config["global"]["serverChanKEY"])
-#                 print("I:时间：{0}，结束打卡流程".format(time.strftime("%H:%M:%S")))
-#                 time.sleep(sleep)
-#                 continue
-#         # Server 酱接口
-#         if config.getboolean("global", "enableServerChan"):
-#             print("I:正在使用 Server酱 推送通知")
-#             pushInfo("结束打卡流程，请检查结果是否正常", info, config["global"]["serverChanKEY"])
-#         print("I:时间：{0}，结束打卡流程,返回信息:{1}".format(time.strftime("%H:%M:%S"), info))
-#         time.sleep(3600)
-#         if keepAlive(cookies):
-#             print("W:Cookie已过期，请更换，程序已退出")
-#             pushInfo("警告:Cookie已过期，请更换", "拜托≧ ﹏ ≦", config["global"]["serverChanKEY"])
-
-#     print("I:时间：{}，等待打卡".format(time.strftime("%H:%M:%S")))
-#     if keepAlive(cookies):
-#         print("W:Cookie已过期，请更换，程序已退出")
-#         pushInfo("警告:Cookie已过期，请更换", "拜托≧ ﹏ ≦", config["global"]["serverChanKEY"])
-#         exit()
-#     time.sleep(600)
+    time.sleep(7200)
+    print("I:时间：{}，等待打卡".format(time.strftime("%H:%M:%S")))
 

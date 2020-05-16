@@ -25,7 +25,7 @@ sudo apt install python3 pip3
 ```
 - 安装必须的库，如遇失败，请赋予 管理员/root 权限
 ```bash
-pip3 install beautifulsoup4 requests pycrypto
+pip3 install beautifulsoup4 requests pycryptodome
 ```
 - （可选）安装 [Git](https://git-scm.com/)
 - （可选）使用 Git 拉取代码

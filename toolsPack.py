@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import configparser
 import requests
 import crypto
+import time
 
 
 __all__ = ['login', 'infoGen', 'pushInfo', 'cookiesHander', 'dataHander', 'headers', 'checkAlive']
@@ -61,10 +62,10 @@ def login(username, password):
     response = s.get('http://yun.ujs.edu.cn/site/login', headers=headers, verify=False)
     response = s.get('http://yun.ujs.edu.cn/', headers=headers, verify=False)
     soup = BeautifulSoup(response.text, "html.parser")
-    print("I: sessionID: {}".format(s.cookies["cloud_sessionID"]))
+    print("I:sessionID: {}".format(s.cookies["cloud_sessionID"]))
     if soup.find(id = "headLogin").a.string == "用户登录":
         raise passWordErr("用户名/密码错误，或要求验证码（尝试次数达到上限）")
-    print("I: {},你能听到吗？(登录成功)".format(soup.find(id = "headLogin").a.string))
+    print("I:{},你能听到吗？(登录成功)".format(soup.find(id = "headLogin").a.string))
     return s.cookies["cloud_sessionID"]
 
 def cookiesHander():
@@ -174,6 +175,10 @@ def checkAlive(cookies):
     soup = BeautifulSoup(response.text, "html.parser")
     # 大概不会有人叫"用户登录"吧？
     # 如果有，我道歉 ~~>_<~~
+    try:
+        name = soup.find(id = "headLogin").a.string
+    except:
+        return 2
     if  soup.find(id = "headLogin").a.string == "用户登录":
         return 1
     else:
