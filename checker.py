@@ -46,7 +46,7 @@ checkTime = int(config["global"]["checkTime"])
 
 def check(cookies):
     response = requests.post('http://yun.ujs.edu.cn/xxhgl/yqsb/grmrsb',\
-        headers=headers, cookies=cookies, data=data, verify=False)
+        headers = headers, cookies=cookies, data=data, verify=False)
     soup = BeautifulSoup(response.text, "html.parser")
     try:
         msg = soup.find_all("h2")[1].string
@@ -57,6 +57,7 @@ def check(cookies):
 enableServerChan = config.getboolean("global", "enableServerChan")
 while True:
     now = int(time.strftime("%H"))
+    '''
     checkStatus = checkAlive(cookies)
     while checkStatus == 2:
         # retry
@@ -71,6 +72,7 @@ while True:
     elif checkAlive(cookies) == 1:
         # cookie 无效但提供用户名/密码：尝试再次获取新的 sessionID
         cookies = cookiesHander()
+    '''
     if now == checkTime:
         print("I:时间：{}，进入打卡流程".format(time.strftime("%H:%M:%S")))
         while True:

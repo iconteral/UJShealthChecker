@@ -4,50 +4,29 @@ import configparser
 import requests
 import crypto
 import time
+from static import ua, Login
 
 
 __all__ = ['login', 'infoGen', 'pushInfo', 'cookiesHander', 'dataHander', 'headers', 'checkAlive']
 
-headers = {
-    'Connection': 'keep-alive',
-    'Upgrade-Insecure-Requests': '1',
-    'Origin': 'http://yun.ujs.edu.cn',
-    'Content-Type': 'application/x-www-form-urlencoded',
-    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0',
-    'Accept': 'text/html',
-    'Referer': 'http://yun.ujs.edu.cn/xxhgl/yqsb/grmrsb?v=9204',
-    'Accept-Language': 'zh-CN,zh;q=0.9,en-GB;q=0.8,en;q=0.7',
-}
+headers = ua.headers
 
 class passWordErr(ValueError):
     def __init__(self, message):
         self.message = message
     pass
 
+
 def login(username, password):
-    headers = {
-        'Connection': 'keep-alive',
-        'Cache-Control': 'max-age=0',
-        'Upgrade-Insecure-Requests': '1',
-        'Origin': 'https://pass.ujs.edu.cn',
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-        'Sec-Fetch-Site': 'same-origin',
-        'Sec-Fetch-Mode': 'navigate',
-        'Sec-Fetch-User': '?1',
-        'Sec-Fetch-Dest': 'document',
-        'Referer': 'https://pass.ujs.edu.cn/cas/login',
-        'Accept-Language': 'zh-CN,zh;q=0.9,en-GB;q=0.8,en;q=0.7',
-    }
+    
     s = requests.Session()
     response = s.get("https://pass.ujs.edu.cn/cas/login", headers = headers)
     soup = BeautifulSoup(response.text, "html.parser")
     key = soup.find(id = "pwdDefaultEncryptSalt")["value"]
     lt = soup.find("input" , {"name":"lt"})["value"]
     execution = soup.find("input" , {"name":"execution"})["value"]
-    enc = crypto.aesEncrypt(bytes(key, encoding = "utf-8"),bytes("aNjp4cpa7SH8tSG5",encoding = "utf-8"))
-    addition = "eJFAF3ZnD4sKpFKhA3rNbnht6nZPKXKeMxKR5e7MhkCwBZEwwfZXszf25APPp6Fn"
+    enc = crypto.aesEncrypt(bytes(key, encoding = "utf-8"),bytes(Login.iv, encoding = "utf-8"))
+    addition = Login.addition
     password = str(enc.encrypt(addition + password), encoding="utf-8")
     data = {
         'username': username,
@@ -59,13 +38,13 @@ def login(username, password):
         'rmShown': '1'
     }
     response = s.post("https://pass.ujs.edu.cn/cas/login",headers = headers, data = data)
-    response = s.get('http://yun.ujs.edu.cn/site/login', headers=headers, verify=False)
-    response = s.get('http://yun.ujs.edu.cn/', headers=headers, verify=False)
+    response = s.get('http://yun.ujs.edu.cn/site/login', headers=headers)
+    response = s.get('http://yun.ujs.edu.cn/xxhgl/yqsb/index', headers=headers, allow_redirects=False)
+    if response.status_code == 302:
+        raise passWordErr("用户名/密码错误，或要求验证码(尝试次数达到上限)")
     soup = BeautifulSoup(response.text, "html.parser")
     print("I:sessionID: {}".format(s.cookies["cloud_sessionID"]))
-    if soup.find(id = "headLogin").a.string == "用户登录":
-        raise passWordErr("用户名/密码错误，或要求验证码（尝试次数达到上限）")
-    print("I:{},你能听到吗？(登录成功)".format(soup.find(id = "headLogin").a.string))
+    print("I:{}".format(list(soup.p.strings)[0]))
     return s.cookies["cloud_sessionID"]
 
 def cookiesHander():
@@ -135,9 +114,6 @@ def infoGen(cookies):
         else:
             checkInfo["additionalInfo"][button["name"]] = ""
 
-    # 删除废物
-    # del checkInfo["additionalInfo"]["latitude"]
-    # del checkInfo["additionalInfo"]["longitude"]
 
     # 处理 select tag, isSelected = 1 代表已预先选择
     isSelected = False
