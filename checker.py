@@ -90,6 +90,6 @@ while True:
                 break
         time.sleep(3600) # 好梦
         continue
-    time.sleep(7200)
+    time.sleep(1800)
     print("I:时间：{}，等待打卡".format(time.strftime("%H:%M:%S")))
 
