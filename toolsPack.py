@@ -4,7 +4,9 @@ import configparser
 import requests
 import crypto
 import time
+import muggle_ocr
 from static import ua, Login
+
 
 
 __all__ = ['login', 'infoGen', 'pushInfo', 'cookiesHander', 'dataHander', 'headers', 'checkAlive']
@@ -28,6 +30,14 @@ def login(username, password):
     enc = crypto.aesEncrypt(bytes(key, encoding = "utf-8"),bytes(Login.iv, encoding = "utf-8"))
     addition = Login.addition
     password = str(enc.encrypt(addition + password), encoding="utf-8")
+    
+    captcha_bytes = s.get("https://pass.ujs.edu.cn/cas/captcha.html", headers = headers).content
+    sdk = muggle_ocr.SDK(model_type=muggle_ocr.ModelType.Captcha)
+    captha = sdk.predict(image_bytes=captcha_bytes)
+    with open("cap.png", 'wb') as file:
+        file.write(captcha_bytes)
+    print(captha)
+
     data = {
         'username': username,
         'password': password,
@@ -35,7 +45,8 @@ def login(username, password):
         'dllt': 'userNamePasswordLogin',
         'execution': execution,
         '_eventId': 'submit',
-        'rmShown': '1'
+        'rmShown': '1',
+        'captchaResponse':captha
     }
     response = s.post("https://pass.ujs.edu.cn/cas/login",headers = headers, data = data)
     response = s.get('http://yun.ujs.edu.cn/site/login', headers=headers)
