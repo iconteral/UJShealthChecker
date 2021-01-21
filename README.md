@@ -10,10 +10,11 @@
 - [x] 微信推送打卡结果
 - [x] 无需桌面环境，云打卡友好
 - [x] 基于 Python3
+- [x] 支持两种工作模式
 - [ ] ~~自动获得位置信息~~
 - [ ] ~~自动获得体温~~
 
-若你有一片闲置的 RaspberryPi 或者是一台闲置的 VPS， 可获得最佳体验
+若你有一片闲置的 RaspberryPi 或者是一台闲置的 VPS， 可获得最佳体验。
 
 ### 使用方法
 #### 安装依赖
@@ -22,6 +23,7 @@
 对于 Linux 用户(以 Ubuntu 为例)
 ```bash
 sudo apt install python3 pip3
+pip3 install -r requirements.txt
 ```
 - 安装必须的库，如遇失败，请赋予 管理员/root 权限
 ```bash
@@ -57,12 +59,16 @@ git clone https://github.com/iconteral/UJShealthChecker.git
 ```bash
 python chechker.py
 ```
-该过程会收集用户的默认信息以进行打卡，信息将会保存在 ```info.ini``` 中，请详细检查此文件中的信息以防误报，详见 FAQ: [info.ini 的说明](#infoini-%e7%9a%84%e8%af%b4%e6%98%8e)。
+该过程会收集用户的默认信息以进行打卡，信息将会保存在 ```info.ini``` 中，**请详细检查此文件中的信息以防误报，其中 ```qtyc``` 为必填字段**，详见 FAQ: [info.ini 的说明](#infoini-%e7%9a%84%e8%af%b4%e6%98%8e)。
 
 #### 运行
+本工具有两种工作模式，一种是普通模式，完成一次打卡即退出；另一种是常驻模式，程序将一直常驻不会退出，直到崩溃或出错为止。
+
+a.常驻模式
+
 检查无误后，大功告成，直接运行程序即可，~~不出意外的话~~ ，程序会在每天的 checkTime 左右🤔为您打卡
 ```bash
-python chechker.py
+python checker-daemon.py
 ```
 若需要后台运行，对于 Linux 用户，推荐使用 screen，以 Ubuntu 为例：
 ```bash
@@ -70,6 +76,21 @@ sudo apt install screen
 screen -S checker # 创建一个新的 session 名为 checker
 python chechker.py # 程序运行之后使用 ctrl + a + d 退出 session
 screen -r checker # 回到 checker session
+```
+
+b.普通模式
+
+直接运行即可
+```bash
+python3 checker.py
+```
+为了实现自动化打卡需要使用系统的 cron 定时运行，对于 linux 系统的用户，可以使用 cron 以自动运行，执行命令以编辑 crontab：
+```bash
+crontab -e
+```
+在文件末尾加上（以每天7:00自动运行 checker.py，保存输出到 ~/checklog.txt 为例）
+```bash
+0 7 * * * python3 checker.py > ~/checklog.txt
 ```
 
 ### FAQ
@@ -84,7 +105,7 @@ screen -r checker # 回到 checker session
 ![cookies](assets/Cookies.png)
 
 #### info.ini 的说明
-一般情况下，[fixedInfo]的内容无需修改，[additionalInfo]根据需要填写，可以留空
+一般情况下，[fixedInfo]的内容不可修改，[additionalInfo]根据需要填写，可以留空
 
 | 项目           | 说明                          | 举例                                                                   |
 |--------------|-----------------------------|----------------------------------------------------------------------|
@@ -98,7 +119,7 @@ screen -r checker # 回到 checker session
 | ```bj```           | 班级，不可更改                     | 7701                                                              |
 | ```xm```           | 姓名，不可更改                     | 林子月                                                             |
 | ```zjh```          | 证件号，不可更改                    | 440101199900000000                                               |
-| ~~xb~~             | ~~性别，fixme(一律女性，但是大概无所谓)，不可更改~~ | ~~女~~                                                |
+| ```xb```           | 性别，不可更改 | 女                     |
 | ```nl```           | 年龄，不可更改                     | 20                                                                |
 | ```sjh```          | 手机号，不可更改                    | 2025550185                                                       |
 | ```sfhbj```        | 是否湖北籍                       | 否/是                                                               |
@@ -113,7 +134,7 @@ screen -r checker # 回到 checker session
 | ```sfid```         | 省份id（通常为身份证号码前两位+0000） | 440000                                                           |
 | ```csid```         | 城市id（通常为身份证号码前两四位+00） | 440100                                                           |
 | ```xqid```         | 辖区id（通常为身份证号码前两六位）    | 440105                                                           |
-| ```jqdt```         | 假期动态                        | 假期去湖北/假期未离校/假期去湖北以外地区/假期去湖北提前返校/假期去湖北以外地区提前返校|
+| ```jqdt```         | 近期动态                        | 近14天内前往中高风险地区并返回镇江/近14天内未离开镇江/当前在中高风险地区/当前在低风险地区（不在镇江）/近14天内前往低风险地区并返回镇江|
 | ```dzsj_m```       | 返回镇江时间-月                    | 5                                                                    |
 | ```dzsj_d```       | 返回镇江时间-日                    | 20                                                                   |
 | ```czjtgj```       | 返回时乘坐交通的工具                  | 飞机/火车/自驾/轮船/客车/其他                                        |
@@ -121,8 +142,8 @@ screen -r checker # 回到 checker session
 | ```mqzdyqdyjcs```  | 潜在接触病毒途径                 | 1月10日之后到访过重点疫区/没去重点疫区但与重点疫区人员有接触史/滞留重点疫区人员/其他原因需列入重点防控/ （空，代表无）  |
 | ```zdyq```         | 到访的重点疫区或接触该疫区人员       | 湖北全省/浙江省温州市/浙江省台州市/浙江省杭州市/浙江省宁波市/河南省信阳市/河南省驻马店市/安徽省合肥市/安徽省阜阳市/江西省南昌市 |
 | ```xsfxbj```       | 是否返校                        | 未返校/已返校                                                              |
+|```qtyc```          |其他异常 (初始化后需要手动填写)           |无/不发烧但咳嗽/不发烧但腹泻                                               |
 | ```btn```          | 无用                          |                                                                      |
-
 
 ### 免责声明
 在使用本程序之前，您必须同意此 AUP（可接受使用策略）：

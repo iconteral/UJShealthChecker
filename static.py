@@ -13,7 +13,7 @@ class ua:
 
 # Login encrypt
 class Login:
-    addition = "eJFAF3ZnD4sKpFKhA3rNbnht6nZPKXKeMxKR5e7MhkCwBZEwwfZXszf25APPp6Fn"
-    iv = "aNjp4cpa7SH8tSG5"
+    addition = 'eJFAF3ZnD4sKpFKhA3rNbnht6nZPKXKeMxKR5e7MhkCwBZEwwfZXszf25APPp6Fn'
+    iv = 'aNjp4cpa7SH8tSG5'
 
 hel = 123
