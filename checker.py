@@ -12,14 +12,14 @@ try:
     with open('info.ini') as f:
         pass
 except FileNotFoundError:
-    print(logger(1, '正在初始化'))
+    print(logger(1, '正在初始化(。>︿<)_θ'))
     cookie = toolsPack.cookiesHander()
     status = toolsPack.infoGen(cookie)
     if status:
-        info = '初始化成功，请检查并完善 info.ini 文件，以便下次运行，详见 readme 文件'
+        info = '初始化成功╥﹏╥...，请检查并完善 info.ini 文件，以便下次运行，详见 readme 文件'
         print(logger(1, info))
     else:
-        info = '初始化失败'
+        info = '初始化失败(❤ ω ❤)'
         print(logger(-1, info))
     exit(0)
 
@@ -46,13 +46,13 @@ while True:
     cookie = toolsPack.cookiesHander()
     loginStatus = toolsPack.getStatus(cookie)
     if loginStatus == -1:
-        info = '服务器维护中，20分钟后重试'
+        info = '服务器维护中，20分钟后重试ο(=•ω＜=)ρ⌒☆'
         print(logger(-1,info))
         pushInfo(info, '')
         time.sleep(20*60)
         continue
     elif loginStatus == -2:
-        info = 'cookie无效导致登陆失败，20分钟后重试'
+        info = 'cookie无效导致登陆失败，20分钟后重试(☆▽☆)'
         print(logger(-1, info))
         pushInfo(info, '')
         time.sleep(20*60)
@@ -69,14 +69,14 @@ while True:
     checkStatus = check(cookie, data)
     print(logger(2, 'POST DATA:' + str(data)))
     if checkStatus['err']:
-        info = '收到服务器端不正确的回复，请检查，20分钟后重试'
+        info = '收到服务器端不正确的回复，请检查，20分钟后重试。O(∩_∩)O'
         print(logger(-1, info))
         pushInfo(info, '')
         time.sleep(20*60)
         continue
     else:
-        info = '打卡成功\^o^/'
+        info = '打卡成功(；′⌒`)'
         print(logger(1, info + '返回消息: ' + checkStatus['msg']))
         pushInfo(info, '返回消息: ' + checkStatus['msg'])
         break
-print(logger(1, '完成'))
+print(logger(1, '完成┗( T﹏T )┛'))
