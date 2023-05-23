@@ -14,4 +14,4 @@ pycryptodome == 3.9.6
 # C:\Users\ICOCC\UJShealthChecker\checker-daemon.py: 3
 # C:\Users\ICOCC\UJShealthChecker\checker.py: 3
 # C:\Users\ICOCC\UJShealthChecker\toolsPack.py: 4
-requests == 2.25.1
+requests == 2.31.0
